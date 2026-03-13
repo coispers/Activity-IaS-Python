@@ -19,26 +19,6 @@ Each part folder contains:
 - Python 3.13+
 - Windows PowerShell (examples below use PowerShell)
 
-## Setup
-
-1. Open a terminal in the project root:
-
-```powershell
-cd "d:\Activity IaS Python"
-```
-
-2. Activate your virtual environment:
-
-```powershell
-& ".venv\Scripts\Activate.ps1"
-```
-
-3. Install dependencies (if not installed yet):
-
-```powershell
-pip install flask cryptography
-```
-
 ## Start the Servers
 
 Open two separate terminals in project root and run:
