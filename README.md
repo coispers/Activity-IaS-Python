@@ -26,14 +26,12 @@ Open two separate terminals in project root and run:
 Terminal A (Auth Server):
 
 ```powershell
-$env:INTER_SERVICE_SECRET="part4-shared-secret"
 python auth_server.py
 ```
 
 Terminal B (File Server):
 
 ```powershell
-$env:INTER_SERVICE_SECRET="part4-shared-secret"
 python file_server.py
 ```
 
