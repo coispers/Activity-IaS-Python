@@ -1,13 +1,3 @@
-# Activity-IaS-Python
-
-Security hardening lab project with 5 progressive parts:
-
-- Part 1: Reconnaissance and exploitation baseline checks
-- Part 2: Encryption of sensitive file responses
-- Part 3: Role-Based Access Control (RBAC)
-- Part 4: Zero-trust inter-service token validation
-- Part 5: Attack testing (including replay attack verification)
-
 ## Project Structure
 
 - auth_server.py
