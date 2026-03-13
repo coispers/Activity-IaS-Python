@@ -27,10 +27,10 @@ Date: 2026-03-13
 
 ### Replay Token
 
-- Status: VULNERABLE
-- Evidence: [part5/replay_token_test.py](part5/replay_token_test.py) returned status 200 on both first token use and replay use.
+- Status: BLOCKED
+- Evidence: [part5/replay_token_test.py](part5/replay_token_test.py) now returns status 200 on first use and 401 with `{"error":"Replay token detected"}` on replay.
 
 ## Notes
 
 - If replay token attempt returns 200 on both first and second use, replay protection is missing.
-- Current implementation needs anti-replay controls (for example jti/nonce tracking, one-time tokens, or short-lived token + request binding).
+- Anti-replay control implemented: one-time token use based on token `jti` tracking in file service.

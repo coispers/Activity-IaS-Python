@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import json
 import os
+import secrets
 import time
 
 from flask import Flask, request, jsonify
@@ -18,6 +19,7 @@ def create_access_token(username: str, role: str, ttl_seconds: int = 300) -> str
         "user": username,
         "role": role,
         "exp": int(time.time()) + ttl_seconds,
+        "jti": secrets.token_hex(16),
     }
     payload_json = json.dumps(payload, separators=(",", ":"), sort_keys=True)
     payload_b64 = (

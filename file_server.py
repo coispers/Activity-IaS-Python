@@ -16,6 +16,7 @@ files = {
 user_roles = {"adminCed": "manager", "employeeStyl": "staff"}
 file_access_policy = {"salary.xlsx": "manager", "meetingNotes.txt": "staff"}
 INTER_SERVICE_SECRET = os.getenv("INTER_SERVICE_SECRET", "change-this-shared-secret")
+used_token_ids: dict[str, int] = {}
 
 
 def build_fernet_key(secret: str) -> bytes:
@@ -58,6 +59,12 @@ def verify_access_token(token: str):
     return payload, None
 
 
+def cleanup_used_tokens(now_ts: int) -> None:
+    expired_ids = [token_id for token_id, exp in used_token_ids.items() if exp < now_ts]
+    for token_id in expired_ids:
+        used_token_ids.pop(token_id, None)
+
+
 @app.route("/file-request-v1", methods=["GET"])
 def get_file():
     filename = request.args.get("name")
@@ -71,8 +78,19 @@ def get_file():
     if token_error:
         return jsonify({"error": token_error}), 401
 
+    now_ts = int(time.time())
+    cleanup_used_tokens(now_ts)
+
     username = token_payload.get("user")
     role = token_payload.get("role")
+    token_id = token_payload.get("jti")
+    token_exp = token_payload.get("exp")
+
+    if not isinstance(token_id, str) or not token_id:
+        return jsonify({"error": "Invalid token identifier"}), 401
+
+    if token_id in used_token_ids:
+        return jsonify({"error": "Replay token detected"}), 401
 
     if requested_user and requested_user != username:
         return jsonify({"error": "User identity mismatch"}), 403
@@ -94,6 +112,8 @@ def get_file():
 
     if role != required_role:
         return jsonify({"error": "Access denied", "requiredRole": required_role}), 403
+
+    used_token_ids[token_id] = token_exp
 
     encrypted_content = cipher.encrypt(file_content.encode("utf-8")).decode("utf-8")
     return jsonify(
